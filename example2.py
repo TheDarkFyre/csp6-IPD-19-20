@@ -6,9 +6,9 @@
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E2'
-strategy_name = 'Alternate'
-strategy_description = 'Collude, then alternate.'
+team_name = 'Test3'
+strategy_name = 'Castle3'
+strategy_description = 'Plays the Castle3 handshake to find others with the strategy.'
     
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
@@ -21,8 +21,21 @@ def move(my_history, their_history, my_score, their_score):
     Returns 'c' or 'b' for collude or betray.
     '''
     # This player colludes on even numbered rounds (first round is round #0).
-    if len(my_history)%2 == 0:
-        return 'c'
-    else:
-        return 'b'
     
+    Confirmation = ""
+    
+    if len(my_history) < 4:
+      if len(my_history) == 0:
+        return "b"
+      if len(my_history) == 1:
+        return "b"
+      if len(my_history) == 2:
+        return "c"
+      if len(my_history) == 3:
+        if their_history[-1:-3] == my_history[-1:-3]:
+          Confirmation = "Yes"
+    
+    if Confirmation == "Yes":
+      return "c"
+    else:
+      return "b"

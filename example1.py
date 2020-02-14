@@ -6,7 +6,7 @@
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E1'
+team_name = 'Test2'
 strategy_name = 'Tit for Tat'
 strategy_description = 'Return your opponent\'s last move.'
     
