@@ -1,0 +1,309 @@
+--------------------------------------------------------------------------------
+Section 0 - Line up
+--------------------------------------------------------------------------------
+Player 0 (P0): Test1, Parlov
+        Check if opponent is using Tit for Tat, Suspicious Tit For Tat, or Other
+         and will play based on that.
+Player 1 (P1): E1, Tit for Tat
+        Return your opponent's last move.
+Player 2 (P2): E2, Alternate
+        Collude, then alternate.
+Player 3 (P3): E3, Collude but retaliate
+        Collude first round. Collude, except in a round after getting 
+        a severe punishment.
+--------------------------------------------------------------------------------
+Section 1 - Player vs. Player
+--------------------------------------------------------------------------------
+Each column shows pts//round earned against each other player:
+             P0     P1     P2     P3
+vs. P0 :      0   -240   -245   -239
+vs. P1 :   -240      0   -197      0
+vs. P2 :   -245   -201      0   -199
+vs. P3 :   -239      0   -199      0
+TOTAL  :   -724   -441   -641   -438
+--------------------------------------------------------------------------------
+Section 2 - Leaderboard
+--------------------------------------------------------------------------------
+Average points per round:
+Team name (P#):  Score      with strategy name
+E3        (P3):       -110 points with Collude but retaliate                   
+E1        (P1):       -111 points with Tit for Tat                             
+E2        (P2):       -161 points with Alternate                               
+Test1     (P0):       -181 points with Parlov                                  
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+example0--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'Test1'
+strategy_name = 'Parlov'
+strategy_description = 'Check if opponent is using Tit for Tat, Suspicious Tit For Tat, or Other and will play based on that.'
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    
+    # This player plays the Parlov Strategy.
+    strategy = ''
+
+    if len(my_history) == 0:
+      return 'c'
+    elif len(my_history) < 7:
+      return their_history[-1]
+    elif len(my_history) > 7:
+      if their_history[0:-5] == my_history[-1:-6]:
+        strategy = 'TFT'
+      elif their_history[0:-5] == ['b', 'c', 'b', 'c', 'b', 'c']:
+        strategy = "STFT"
+      else:
+        strategy = 'R'
+    
+    if strategy == "TFT":
+      return their_history[-1]
+    if strategy == "STFT":
+      if their_history[-1] == "b" and their_history[-2] == "b":
+        return "b"
+      else:
+        return "c"
+      if strategy == "R":
+        return "b"--------------------------------------------------------------------------------
+example1--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'E1'
+strategy_name = 'Tit for Tat'
+strategy_description = 'Return your opponent\'s last move.'
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    
+    #This example player plays their opponent's last move.
+    if len(my_history) == 0:
+      return 'c'    
+    else:
+      return their_history[-1]
+--------------------------------------------------------------------------------
+example2--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'E2'
+strategy_name = 'Alternate'
+strategy_description = 'Collude, then alternate.'
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    # This player colludes on even numbered rounds (first round is round #0).
+    if len(my_history)%2 == 0:
+        return 'c'
+    else:
+        return 'b'
+    --------------------------------------------------------------------------------
+example3--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'E3'
+strategy_name = 'Collude but retaliate'
+strategy_description = '''\
+Collude first round. Collude, except in a round after getting 
+a severe punishment.'''
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    if len(my_history)==0: # It's the first round; collude.
+        return 'c'
+    elif my_history[-1]=='c' and their_history[-1]=='b':
+        return 'b' # Betray if they were severely punished last time,
+    else:
+        return 'c' # otherwise collude.--------------------------------------------------------------------------------
+Section 3 - Game Data for Team Test1
+--------------------------------------------------------------------------------
+-240 pt//round: Test1(P0) "Parlov"
+-240 pt//ound: E1(P1) "Tit for Tat"
+CCCCCCC                                                                         
+CCCCCCCc                                                                        
+
+                                                                                
+                                                                                
+
+         
+         
+
+--------------------------------------------------------------------------------
+-245 pt//round: Test1(P0) "Parlov"
+-245 pt//ound: E2(P2) "Alternate"
+CcBcBcB                                                                         
+CBcBcBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+                      
+cbcbcbcbcbcbcbcbcbcbcb
+
+--------------------------------------------------------------------------------
+-239 pt//round: Test1(P0) "Parlov"
+-239 pt//ound: E3(P3) "Collude but retaliate"
+CCCCCCC                                                                         
+CCCCCCCccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+                                                                           
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E1
+--------------------------------------------------------------------------------
+-240 pt//round: E1(P1) "Tit for Tat"
+-240 pt//ound: Test1(P0) "Parlov"
+CCCCCCCc                                                                        
+CCCCCCC                                                                         
+
+                                                                                
+                                                                                
+
+         
+         
+
+--------------------------------------------------------------------------------
+-201 pt//round: E1(P1) "Tit for Tat"
+-197 pt//ound: E2(P2) "Alternate"
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+BcBcBc
+cBcBcB
+
+--------------------------------------------------------------------------------
+0 pt//round: E1(P1) "Tit for Tat"
+0 pt//ound: E3(P3) "Collude but retaliate"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCC
+CCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E2
+--------------------------------------------------------------------------------
+-245 pt//round: E2(P2) "Alternate"
+-245 pt//ound: Test1(P0) "Parlov"
+CBcBcBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+CcBcBcB                                                                         
+
+cbcbcbcbcbcbcbcbcbcbcb
+                      
+
+--------------------------------------------------------------------------------
+-197 pt//round: E2(P2) "Alternate"
+-201 pt//ound: E1(P1) "Tit for Tat"
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+cBcBcB
+BcBcBc
+
+--------------------------------------------------------------------------------
+-199 pt//round: E2(P2) "Alternate"
+-199 pt//ound: E3(P3) "Collude but retaliate"
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E3
+--------------------------------------------------------------------------------
+-239 pt//round: E3(P3) "Collude but retaliate"
+-239 pt//ound: Test1(P0) "Parlov"
+CCCCCCCccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+CCCCCCC                                                                         
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                           
+
+--------------------------------------------------------------------------------
+0 pt//round: E3(P3) "Collude but retaliate"
+0 pt//ound: E1(P1) "Tit for Tat"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCC
+CCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+-199 pt//round: E3(P3) "Collude but retaliate"
+-199 pt//ound: E2(P2) "Alternate"
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+--------------------------------------------------------------------------------

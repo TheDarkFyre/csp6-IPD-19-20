@@ -6,9 +6,9 @@
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E0'
-strategy_name = 'Collude'
-strategy_description = 'Always collude.'
+team_name = 'Test1'
+strategy_name = 'Parlov'
+strategy_description = 'Check if opponent is using Tit for Tat, Suspicious Tit For Tat, or Other and will play based on that.'
     
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
@@ -21,6 +21,27 @@ def move(my_history, their_history, my_score, their_score):
     Returns 'c' or 'b' for collude or betray.
     '''
     
-    # This player always colludes.
-    return 'c'
+    # This player plays the Parlov Strategy.
+    strategy = ''
+
+    if len(my_history) == 0:
+      return 'c'
+    elif len(my_history) < 7:
+      return their_history[-1]
+    elif len(my_history) > 7:
+      if their_history[0:-5] == my_history[-1:-6]:
+        strategy = 'TFT'
+      elif their_history[0:-5] == ['b', 'c', 'b', 'c', 'b', 'c']:
+        strategy = "STFT"
+      else:
+        strategy = 'R'
     
+    if strategy == "TFT":
+      return their_history[-1]
+    if strategy == "STFT":
+      if their_history[-1] == "b" and their_history[-2] == "b":
+        return "b"
+      else:
+        return "c"
+      if strategy == "R":
+        return "b"

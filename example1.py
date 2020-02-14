@@ -7,8 +7,8 @@
 ####
 
 team_name = 'E1'
-strategy_name = 'Betray'
-strategy_description = 'Always betray.'
+strategy_name = 'Tit for Tat'
+strategy_description = 'Return your opponent\'s last move.'
     
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
@@ -21,5 +21,8 @@ def move(my_history, their_history, my_score, their_score):
     Returns 'c' or 'b' for collude or betray.
     '''
     
-    #This example player always betrays.      
-    return 'b'
+    #This example player plays their opponent's last move.
+    if len(my_history) == 0:
+      return 'c'    
+    else:
+      return their_history[-1]
