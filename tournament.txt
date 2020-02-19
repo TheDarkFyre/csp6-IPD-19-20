@@ -4,32 +4,32 @@ Section 0 - Line up
 Player 0 (P0): Test1, Parlov
         Check if opponent is using Tit for Tat, Suspicious Tit For Tat, or Other
          and will play based on that.
-Player 1 (P1): E1, Tit for Tat
+Player 1 (P1): Test2, Tit for Tat
         Return your opponent's last move.
-Player 2 (P2): E2, Alternate
-        Collude, then alternate.
-Player 3 (P3): E3, Collude but retaliate
-        Collude first round. Collude, except in a round after getting 
-        a severe punishment.
+Player 2 (P2): Test3, Castle3
+        Plays the Castle3 handshake to find others with the strategy.
+Player 3 (P3): Test4, Play based on opponent move
+        Returns a random output for the first 10 rounds, then plays based on wha
+        t the opponent plays
 --------------------------------------------------------------------------------
 Section 1 - Player vs. Player
 --------------------------------------------------------------------------------
 Each column shows pts//round earned against each other player:
              P0     P1     P2     P3
-vs. P0 :      0   -240   -245   -239
-vs. P1 :   -240      0   -197      0
-vs. P2 :   -245   -201      0   -199
-vs. P3 :   -239      0   -199      0
-TOTAL  :   -724   -441   -641   -438
+vs. P0 :      0   -239   -244   -247
+vs. P1 :   -239      0   -246   -198
+vs. P2 :   -250   -250      0   -254
+vs. P3 :   -247   -203   -238      0
+TOTAL  :   -736   -692   -728   -699
 --------------------------------------------------------------------------------
 Section 2 - Leaderboard
 --------------------------------------------------------------------------------
 Average points per round:
 Team name (P#):  Score      with strategy name
-E3        (P3):       -110 points with Collude but retaliate                   
-E1        (P1):       -111 points with Tit for Tat                             
-E2        (P2):       -161 points with Alternate                               
-Test1     (P0):       -181 points with Parlov                                  
+Test2     (P1):       -173 points with Tit for Tat                             
+Test4     (P3):       -175 points with Play based on opponent move             
+Test3     (P2):       -182 points with Castle3                                 
+Test1     (P0):       -184 points with Parlov                                  
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 example0--------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ example1------------------------------------------------------------------------
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E1'
+team_name = 'Test2'
 strategy_name = 'Tit for Tat'
 strategy_description = 'Return your opponent\'s last move.'
     
@@ -119,9 +119,9 @@ example2------------------------------------------------------------------------
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E2'
-strategy_name = 'Alternate'
-strategy_description = 'Collude, then alternate.'
+team_name = 'Test3'
+strategy_name = 'Castle3'
+strategy_description = 'Plays the Castle3 handshake to find others with the strategy.'
     
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
@@ -134,11 +134,24 @@ def move(my_history, their_history, my_score, their_score):
     Returns 'c' or 'b' for collude or betray.
     '''
     # This player colludes on even numbered rounds (first round is round #0).
-    if len(my_history)%2 == 0:
-        return 'c'
+    
+    Confirmation = ""
+    
+    if len(my_history) < 4:
+      if len(my_history) == 0:
+        return "b"
+      if len(my_history) == 1:
+        return "b"
+      if len(my_history) == 2:
+        return "c"
+      if len(my_history) == 3:
+        if their_history[-1:-3] == my_history[-1:-3]:
+          Confirmation = "Yes"
+    
+    if Confirmation == "Yes":
+      return "c"
     else:
-        return 'b'
-    --------------------------------------------------------------------------------
+      return "b"--------------------------------------------------------------------------------
 example3--------------------------------------------------------------------------------
 ####
 # Each team's file must define four tokens:
@@ -148,12 +161,14 @@ example3------------------------------------------------------------------------
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E3'
-strategy_name = 'Collude but retaliate'
+team_name = 'Test4'
+strategy_name = 'Play based on opponent move'
 strategy_description = '''\
-Collude first round. Collude, except in a round after getting 
-a severe punishment.'''
-    
+Returns a random output for the first 10 rounds, then plays based on what the opponent plays
+'''
+
+import random
+
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
     
@@ -164,146 +179,141 @@ def move(my_history, their_history, my_score, their_score):
     
     Returns 'c' or 'b' for collude or betray.
     '''
-    if len(my_history)==0: # It's the first round; collude.
-        return 'c'
-    elif my_history[-1]=='c' and their_history[-1]=='b':
-        return 'b' # Betray if they were severely punished last time,
-    else:
-        return 'c' # otherwise collude.--------------------------------------------------------------------------------
+    while len(my_history) < 10:
+      return random.choice(["b", "c"])
+    
+    if their_history[-2] == "c":
+      if their_history[-1] == "c":
+        return "c"
+      if their_history[-1] == "b":
+        return "b"
+    if their_history[-2] == "b":
+      if their_history[-1] == "c":
+        return "c"
+      if their_history[-1] == "b":
+        return "b"--------------------------------------------------------------------------------
 Section 3 - Game Data for Team Test1
 --------------------------------------------------------------------------------
--240 pt//round: Test1(P0) "Parlov"
--240 pt//ound: E1(P1) "Tit for Tat"
-CCCCCCC                                                                         
-CCCCCCCc                                                                        
-
-                                                                                
-                                                                                
-
-         
-         
-
---------------------------------------------------------------------------------
--245 pt//round: Test1(P0) "Parlov"
--245 pt//ound: E2(P2) "Alternate"
-CcBcBcB                                                                         
-CBcBcBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-
-                      
-cbcbcbcbcbcbcbcbcbcbcb
-
---------------------------------------------------------------------------------
 -239 pt//round: Test1(P0) "Parlov"
--239 pt//ound: E3(P3) "Collude but retaliate"
+-239 pt//ound: Test2(P1) "Tit for Tat"
 CCCCCCC                                                                         
-CCCCCCCccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+CCCCCCCc                                                                        
 
-                                                                           
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                            
+                                                                            
+
+--------------------------------------------------------------------------------
+-250 pt//round: Test1(P0) "Parlov"
+-244 pt//ound: Test3(P2) "Castle3"
+cbBCcbb                                                                         
+BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+                                
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-247 pt//round: Test1(P0) "Parlov"
+-247 pt//ound: Test4(P3) "Play based on opponent move"
+cBCcbBC                                                                         
+BcCBbcCbbb                                                                      
+
+                                                                                
+                                                                                
+
+                               
+                               
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-Section 3 - Game Data for Team E1
+Section 3 - Game Data for Team Test2
 --------------------------------------------------------------------------------
--240 pt//round: E1(P1) "Tit for Tat"
--240 pt//ound: Test1(P0) "Parlov"
+-239 pt//round: Test2(P1) "Tit for Tat"
+-239 pt//ound: Test1(P0) "Parlov"
 CCCCCCCc                                                                        
 CCCCCCC                                                                         
 
+                                                                            
+                                                                            
+
+--------------------------------------------------------------------------------
+-250 pt//round: Test2(P1) "Tit for Tat"
+-246 pt//ound: Test3(P2) "Castle3"
+cbBCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-203 pt//round: Test2(P1) "Tit for Tat"
+-198 pt//ound: Test4(P3) "Play based on opponent move"
+cBcbbbbBCcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+BcBbbbbcCBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+BcBcBcBcBcBcBcBcBcBcBcBcBcBc
+cBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team Test3
+--------------------------------------------------------------------------------
+-244 pt//round: Test3(P2) "Castle3"
+-250 pt//ound: Test1(P0) "Parlov"
+BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbBCcbb                                                                         
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                
+
+--------------------------------------------------------------------------------
+-246 pt//round: Test3(P2) "Castle3"
+-250 pt//ound: Test2(P1) "Tit for Tat"
+BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbBCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-238 pt//round: Test3(P2) "Castle3"
+-254 pt//ound: Test4(P3) "Play based on opponent move"
+BbCCbbBbBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbCCbbcbccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team Test4
+--------------------------------------------------------------------------------
+-247 pt//round: Test4(P3) "Play based on opponent move"
+-247 pt//ound: Test1(P0) "Parlov"
+BcCBbcCbbb                                                                      
+cBCcbBC                                                                         
+
                                                                                 
                                                                                 
 
-         
-         
+                               
+                               
 
 --------------------------------------------------------------------------------
--201 pt//round: E1(P1) "Tit for Tat"
--197 pt//ound: E2(P2) "Alternate"
-CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+-198 pt//round: Test4(P3) "Play based on opponent move"
+-203 pt//ound: Test2(P1) "Tit for Tat"
+BcBbbbbcCBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+cBcbbbbBCcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
 
-BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-
-BcBcBc
-cBcBcB
+cBcBcBcBcBcBcBcBcBcBcBcBcBcB
+BcBcBcBcBcBcBcBcBcBcBcBcBcBc
 
 --------------------------------------------------------------------------------
-0 pt//round: E1(P1) "Tit for Tat"
-0 pt//ound: E3(P3) "Collude but retaliate"
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+-254 pt//round: Test4(P3) "Play based on opponent move"
+-238 pt//ound: Test3(P2) "Castle3"
+cbCCbbcbccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+BbCCbbBbBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-
-CCCCCCCCCCCC
-CCCCCCCCCCCC
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-Section 3 - Game Data for Team E2
---------------------------------------------------------------------------------
--245 pt//round: E2(P2) "Alternate"
--245 pt//ound: Test1(P0) "Parlov"
-CBcBcBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-CcBcBcB                                                                         
-
-cbcbcbcbcbcbcbcbcbcbcb
-                      
-
---------------------------------------------------------------------------------
--197 pt//round: E2(P2) "Alternate"
--201 pt//ound: E1(P1) "Tit for Tat"
-CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-
-cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-
-cBcBcB
-BcBcBc
-
---------------------------------------------------------------------------------
--199 pt//round: E2(P2) "Alternate"
--199 pt//ound: E3(P3) "Collude but retaliate"
-CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-
-cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-Section 3 - Game Data for Team E3
---------------------------------------------------------------------------------
--239 pt//round: E3(P3) "Collude but retaliate"
--239 pt//ound: Test1(P0) "Parlov"
-CCCCCCCccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-CCCCCCC                                                                         
-
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-                                                                           
-
---------------------------------------------------------------------------------
-0 pt//round: E3(P3) "Collude but retaliate"
-0 pt//ound: E1(P1) "Tit for Tat"
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-
-CCCCCCCCCCCC
-CCCCCCCCCCCC
-
---------------------------------------------------------------------------------
--199 pt//round: E3(P3) "Collude but retaliate"
--199 pt//ound: E2(P2) "Alternate"
-CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-
-BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------

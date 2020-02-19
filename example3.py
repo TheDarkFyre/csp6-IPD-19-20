@@ -6,12 +6,14 @@
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E3'
-strategy_name = 'Collude but retaliate'
+team_name = 'Test4'
+strategy_name = 'Play based on opponent move'
 strategy_description = '''\
-Collude first round. Collude, except in a round after getting 
-a severe punishment.'''
-    
+Returns a random output for the first 10 rounds, then plays based on what the opponent plays
+'''
+
+import random
+
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
     
@@ -22,9 +24,16 @@ def move(my_history, their_history, my_score, their_score):
     
     Returns 'c' or 'b' for collude or betray.
     '''
-    if len(my_history)==0: # It's the first round; collude.
-        return 'c'
-    elif my_history[-1]=='c' and their_history[-1]=='b':
-        return 'b' # Betray if they were severely punished last time,
-    else:
-        return 'c' # otherwise collude.
+    while len(my_history) < 10:
+      return random.choice(["b", "c"])
+    
+    if their_history[-2] == "c":
+      if their_history[-1] == "c":
+        return "c"
+      if their_history[-1] == "b":
+        return "b"
+    if their_history[-2] == "b":
+      if their_history[-1] == "c":
+        return "c"
+      if their_history[-1] == "b":
+        return "b"
