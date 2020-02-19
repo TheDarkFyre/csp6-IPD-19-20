@@ -9,7 +9,9 @@
 team_name = 'Test2'
 strategy_name = 'Tit for Tat'
 strategy_description = 'Return your opponent\'s last move.'
-    
+
+import random
+
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
     
@@ -21,8 +23,13 @@ def move(my_history, their_history, my_score, their_score):
     Returns 'c' or 'b' for collude or betray.
     '''
     
-    #This example player plays their opponent's last move.
+    #This example player plays their opponent's last move with a 5% chance of returning c and a 5% chance of returning b.
     if len(my_history) == 0:
-      return 'c'    
+      return random.choice(["c", "b"])
     else:
-      return their_history[-1]
+      if random.randint(1,20) == 20:
+        return "c"
+      elif random.randint(1, 20) == 20:
+        return "b"
+      else:
+        return their_history[-1]

@@ -7,7 +7,7 @@
 ####
 
 team_name = 'Test4'
-strategy_name = 'Play based on opponent move'
+strategy_name = 'PBOOM'
 strategy_description = '''\
 Returns a random output for the first 10 rounds, then plays based on what the opponent plays
 '''
@@ -24,7 +24,7 @@ def move(my_history, their_history, my_score, their_score):
     
     Returns 'c' or 'b' for collude or betray.
     '''
-    while len(my_history) < 10:
+    if len(my_history) < 10:
       return random.choice(["b", "c"])
     
     if their_history[-2] == "c":

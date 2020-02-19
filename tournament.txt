@@ -8,7 +8,7 @@ Player 1 (P1): Test2, Tit for Tat
         Return your opponent's last move.
 Player 2 (P2): Test3, Castle3
         Plays the Castle3 handshake to find others with the strategy.
-Player 3 (P3): Test4, Play based on opponent move
+Player 3 (P3): Test4, PBOOM
         Returns a random output for the first 10 rounds, then plays based on wha
         t the opponent plays
 --------------------------------------------------------------------------------
@@ -16,20 +16,20 @@ Section 1 - Player vs. Player
 --------------------------------------------------------------------------------
 Each column shows pts//round earned against each other player:
              P0     P1     P2     P3
-vs. P0 :      0   -239   -244   -247
-vs. P1 :   -239      0   -246   -198
-vs. P2 :   -250   -250      0   -254
-vs. P3 :   -247   -203   -238      0
-TOTAL  :   -736   -692   -728   -699
+vs. P0 :      0   -234   -244   -243
+vs. P1 :   -234      0   -236   -199
+vs. P2 :   -250   -257      0   -251
+vs. P3 :   -243   -199   -246      0
+TOTAL  :   -727   -690   -726   -693
 --------------------------------------------------------------------------------
 Section 2 - Leaderboard
 --------------------------------------------------------------------------------
 Average points per round:
 Team name (P#):  Score      with strategy name
 Test2     (P1):       -173 points with Tit for Tat                             
-Test4     (P3):       -175 points with Play based on opponent move             
+Test4     (P3):       -174 points with PBOOM                                   
+Test1     (P0):       -182 points with Parlov                                  
 Test3     (P2):       -182 points with Castle3                                 
-Test1     (P0):       -184 points with Parlov                                  
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 example0--------------------------------------------------------------------------------
@@ -92,7 +92,9 @@ example1------------------------------------------------------------------------
 team_name = 'Test2'
 strategy_name = 'Tit for Tat'
 strategy_description = 'Return your opponent\'s last move.'
-    
+
+import random
+
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
     
@@ -104,11 +106,16 @@ def move(my_history, their_history, my_score, their_score):
     Returns 'c' or 'b' for collude or betray.
     '''
     
-    #This example player plays their opponent's last move.
+    #This example player plays their opponent's last move with a 5% chance of returning c and a 5% chance of returning b.
     if len(my_history) == 0:
-      return 'c'    
+      return random.choice(["c", "b"])
     else:
-      return their_history[-1]
+      if random.randint(1,20) == 20:
+        return "c"
+      elif random.randint(1, 20) == 20:
+        return "b"
+      else:
+        return their_history[-1]
 --------------------------------------------------------------------------------
 example2--------------------------------------------------------------------------------
 ####
@@ -162,7 +169,7 @@ example3------------------------------------------------------------------------
 ####
 
 team_name = 'Test4'
-strategy_name = 'Play based on opponent move'
+strategy_name = 'PBOOM'
 strategy_description = '''\
 Returns a random output for the first 10 rounds, then plays based on what the opponent plays
 '''
@@ -179,7 +186,7 @@ def move(my_history, their_history, my_score, their_score):
     
     Returns 'c' or 'b' for collude or betray.
     '''
-    while len(my_history) < 10:
+    if len(my_history) < 10:
       return random.choice(["b", "c"])
     
     if their_history[-2] == "c":
@@ -194,13 +201,13 @@ def move(my_history, their_history, my_score, their_score):
         return "b"--------------------------------------------------------------------------------
 Section 3 - Game Data for Team Test1
 --------------------------------------------------------------------------------
--239 pt//round: Test1(P0) "Parlov"
--239 pt//ound: Test2(P1) "Tit for Tat"
+-234 pt//round: Test1(P0) "Parlov"
+-234 pt//ound: Test2(P1) "Tit for Tat"
 CCCCCCC                                                                         
-CCCCCCCc                                                                        
+CCCCCCCc      c b    bcb                                 c c  b       b       c 
 
-                                                                            
-                                                                            
+                         
+                 b       
 
 --------------------------------------------------------------------------------
 -250 pt//round: Test1(P0) "Parlov"
@@ -212,46 +219,49 @@ BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------
--247 pt//round: Test1(P0) "Parlov"
--247 pt//ound: Test4(P3) "Play based on opponent move"
-cBCcbBC                                                                         
-BcCBbcCbbb                                                                      
+-243 pt//round: Test1(P0) "Parlov"
+-243 pt//ound: Test4(P3) "PBOOM"
+CCcBCCC                                                                         
+CCBcCCCbbb                                                                      
 
                                                                                 
                                                                                 
 
-                               
-                               
+                
+                
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 Section 3 - Game Data for Team Test2
 --------------------------------------------------------------------------------
--239 pt//round: Test2(P1) "Tit for Tat"
--239 pt//ound: Test1(P0) "Parlov"
-CCCCCCCc                                                                        
+-234 pt//round: Test2(P1) "Tit for Tat"
+-234 pt//ound: Test1(P0) "Parlov"
+CCCCCCCc      c b    bcb                                 c c  b       b       c 
 CCCCCCC                                                                         
 
-                                                                            
-                                                                            
+                 b       
+                         
 
 --------------------------------------------------------------------------------
--250 pt//round: Test2(P1) "Tit for Tat"
--246 pt//ound: Test3(P2) "Castle3"
-cbBCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+-257 pt//round: Test2(P1) "Tit for Tat"
+-236 pt//ound: Test3(P2) "Castle3"
+cbBCccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+BbcCBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbcbbbbbbbbbbbbbcbbbbbbbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbBbbbbbbbbbbbbbBbbbbbbbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbc
+bbbbbbbbbbB
 
 --------------------------------------------------------------------------------
--203 pt//round: Test2(P1) "Tit for Tat"
--198 pt//ound: Test4(P3) "Play based on opponent move"
-cBcbbbbBCcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-BcBbbbbcCBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+-199 pt//round: Test2(P1) "Tit for Tat"
+-199 pt//ound: Test4(P3) "PBOOM"
+bbBCcBCcbBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcCBcBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbcCBcCBbcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBCcBcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-BcBcBcBcBcBcBcBcBcBcBcBcBcBc
-cBcBcBcBcBcBcBcBcBcBcBcBcBcB
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbcBcBcCCCCCCCCCCCCCCCBcBcBcBcBcBcBcBcBcBcBcBc
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbBcBcBCCCCCCCCCCCCCCCcBcBcBcBcBcBcBcBcBcBcBcB
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -266,54 +276,57 @@ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
                                 
 
 --------------------------------------------------------------------------------
--246 pt//round: Test3(P2) "Castle3"
--250 pt//ound: Test2(P1) "Tit for Tat"
-BbcCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-cbBCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+-236 pt//round: Test3(P2) "Castle3"
+-257 pt//ound: Test2(P1) "Tit for Tat"
+BbcCBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbBCccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbBbbbbbbbbbbbbbBbbbbbbbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbcbbbbbbbbbbbbbcbbbbbbbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbB
+bbbbbbbbbbc
 
 --------------------------------------------------------------------------------
--238 pt//round: Test3(P2) "Castle3"
--254 pt//ound: Test4(P3) "Play based on opponent move"
-BbCCbbBbBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-cbCCbbcbccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+-246 pt//round: Test3(P2) "Castle3"
+-251 pt//ound: Test4(P3) "PBOOM"
+bbccbBBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbBBbcccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 Section 3 - Game Data for Team Test4
 --------------------------------------------------------------------------------
--247 pt//round: Test4(P3) "Play based on opponent move"
--247 pt//ound: Test1(P0) "Parlov"
-BcCBbcCbbb                                                                      
-cBCcbBC                                                                         
+-243 pt//round: Test4(P3) "PBOOM"
+-243 pt//ound: Test1(P0) "Parlov"
+CCBcCCCbbb                                                                      
+CCcBCCC                                                                         
 
                                                                                 
                                                                                 
 
-                               
-                               
+                
+                
 
 --------------------------------------------------------------------------------
--198 pt//round: Test4(P3) "Play based on opponent move"
--203 pt//ound: Test2(P1) "Tit for Tat"
-BcBbbbbcCBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-cBcbbbbBCcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+-199 pt//round: Test4(P3) "PBOOM"
+-199 pt//ound: Test2(P1) "Tit for Tat"
+bbcCBcCBbcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBCcBcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbBCcBCcbBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcCBcBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-cBcBcBcBcBcBcBcBcBcBcBcBcBcB
-BcBcBcBcBcBcBcBcBcBcBcBcBcBc
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbBcBcBCCCCCCCCCCCCCCCcBcBcBcBcBcBcBcBcBcBcBcB
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbcBcBcCCCCCCCCCCCCCCCBcBcBcBcBcBcBcBcBcBcBcBc
 
 --------------------------------------------------------------------------------
--254 pt//round: Test4(P3) "Play based on opponent move"
--238 pt//ound: Test3(P2) "Castle3"
-cbCCbbcbccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-BbCCbbBbBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+-251 pt//round: Test4(P3) "PBOOM"
+-246 pt//ound: Test3(P2) "Castle3"
+bbBBbcccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbccbBBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------
